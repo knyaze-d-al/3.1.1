@@ -1,16 +1,18 @@
 package springcrudapp.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import springcrudapp.security.SecurityConfig;
 
 public class SpringMvcDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return null;
+        return new Class<?>[] { PersistenceConfig.class, SecurityConfig.class, SpringConfig.class };
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringConfig.class, PersistenceConfig.class};
+        return null;
     }
 
     @Override

@@ -1,10 +1,13 @@
 package springcrudapp.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import springcrudapp.service.UserDetailsServiceImpl;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 @Entity
@@ -29,14 +32,31 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @Transient
+    String[] roleNames;
+
+    @Transient
+    @Autowired
+    private UserDetailsServiceImpl userService;
+
     public User() {
 
     }
 
-    public User (String username, String password, Set<Role> roles) {
+    public User (String username, String password, String... roleNames) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+
+        for (String roleName: roleNames) {
+            this.roleNames = roleNames;
+
+            if (roleName.contains("USER")) {
+                this.setRoles(Collections.singleton(userService.findRole(1L).get()));
+            }
+            if (roleName.contains("ADMIN")) {
+                this.setRoles(Collections.singleton(userService.findRole(2L).get()));
+            }
+        }
     }
 
     public long getId() {
@@ -103,4 +123,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }
